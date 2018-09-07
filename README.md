@@ -15,8 +15,7 @@ wherever you import it.
 
 `CreateUser(fName, lName, email, pword string) string`
 
-Parameters
-----------
+Parameters:
 fName: string
     User's first name
 lName: string
