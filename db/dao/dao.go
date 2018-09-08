@@ -73,7 +73,9 @@ func ValidateUser(email string, pword string) error {
 
 func UpdatePassword(userId int, currPword, newPword string) error {
     db := utils.OpenMySQL("root", "dbpassword")
-    err := ValidateUser(userId, currPword)
+    usr, err := GetUser(userId)
+    if err != nil { return err }
+    err := ValidateUser(usr.Email, currPword)
     if err != nil { return err }
     hashByte, _ := bcrypt.GenerateFromPassword([]byte(newPword),
                                                bcrypt.DefaultCost)
@@ -127,7 +129,7 @@ func UpdateArticleBody(id int, body string) error {
     cmd := "UPDATE articles SET body=? WHERE id=?"
     stmt, _ := db.Prepare(cmd)
     _, err := stmt.Exec(body, id)
-    id err != nil { return err }
+    if err != nil { return err }
     return nil
 }
 
