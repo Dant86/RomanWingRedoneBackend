@@ -156,6 +156,24 @@ On success: __nothing__
 
 On failure: [Error](#error)
 
+### `UpdateArticleBody(id, body)`
+
+__Parameters__:
+
+_id: int_
+
+    The ID of the article whose body is to be updated
+
+_body: string_
+
+    The new body of the article
+
+__Returns__:
+
+On success: _none_
+
+On failure: [Error](#error)
+
 ### `GetArticlesFromUser(userId)`
 
 __Parameters__:

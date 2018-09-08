@@ -121,6 +121,16 @@ func DeleteArticle(id int) error {
     if err != nil { return err }
     return nil
 }
+
+func UpdateArticleBody(id int, body string) error {
+    db := utils.OpenMySQL("root", "dbpassword")
+    cmd := "UPDATE articles SET body=? WHERE id=?"
+    stmt, _ := db.Prepare(cmd)
+    _, err := stmt.Exec(body, id)
+    id err != nil { return err }
+    return nil
+}
+
 func ApproveArticle(id int) error {
     db := utils.OpenMySQL("root", "dbpassword")
     cmd := "UPDATE articles SET is_authorized=TRUE WHERE id=?"

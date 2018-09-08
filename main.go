@@ -81,6 +81,13 @@ func ApproveArticle(id int) *C.char {
     return C.CString("{}")
 }
 
+//export UpdateArticleBody
+func UpdateArticleBody(id int, body string) *C.char {
+    err := dao.UpdateArticleBody(id, body)
+    if err != nil { return serializeError(err) }
+    return CString("{}")
+}
+
 //export GetArticlesFromUser
 func GetArticlesFromUser(userId int) *C.char {
     result := "["
