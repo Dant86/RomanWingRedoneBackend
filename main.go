@@ -42,8 +42,8 @@ func GetUserByEmail(email string) *C.char {
 }
 
 //export ValidateUser
-func ValidateUser(id int, pword string) *C.char {
-    err := dao.ValidateUser(id, pword)
+func ValidateUser(email string, pword string) *C.char {
+    err := dao.ValidateUser(email, pword)
     if err != nil { return serializeError(err) }
     return C.CString("{}")
 }
@@ -100,6 +100,21 @@ func GetArticlesFromUser(userId int) *C.char {
 func GetApprovedArticles() *C.char {
     result := "["
     articles, err := dao.GetApprovedArticles()
+    if err != nil { return serializeError(err) }
+    for ix, article := range articles {
+        serialized, _ := json.Marshal(article)
+        result += string(serialized)
+        if ix < len(articles) - 1 {
+            result += ", "
+        }
+    }
+    return C.CString(result + "]")
+}
+
+//export Get10MostRecentArticles
+func Get10MostRecentArticles() string {
+    result := "["
+    articles, err := dao.Get10Get10MostRecentArticles()
     if err != nil { return serializeError(err) }
     for ix, article := range articles {
         serialized, _ := json.Marshal(article)

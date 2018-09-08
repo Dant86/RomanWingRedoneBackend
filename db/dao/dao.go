@@ -60,7 +60,10 @@ func GetHash(userId int) (string, error) {
     return hash, nil
 }
 
-func ValidateUser(id int, pword string) error {
+func ValidateUser(email string, pword string) error {
+    u, err := GetUserByEmail(email)
+    if err != nil { return err }
+    id := u.ID
     h, err := GetHash(id)
     if err != nil { return err }
     err = bcrypt.CompareHashAndPassword([]byte(h), []byte(pword))
@@ -153,6 +156,25 @@ func GetApprovedArticles() ([]models.Article, error) {
     var artArr []models.Article
     cmd := "SELECT id, title, description, creator_id, body, thumbnail_url, " +
            "date_created, is_authorized from ARTICLES WHERE is_authorized=TRUE"
+    rows, err := db.Query(cmd)
+    if err != nil { return artArr, err }
+    for rows.Next() {
+        var a models.Article
+        err := rows.Scan(&a.ID, &a.Title, &a.Description, &a.CreatorID,
+                         &a.Body, &a.ThumbnailUrl, &a.DateCreated,
+                         &a.IsAuthorized)
+        if err != nil { return artArr, err }
+        artArr = append(artArr, a)
+    }
+    return artArr, nil
+}
+
+func Get10MostRecentArticles() ([]models.Article, error) {
+    db := utils.OpenMySQL("root", "dbpassword")
+    var artArr []models.Article
+    cmd := "SELECT id, title, description, creator_id, body, thumbnail_url, " +
+           "date_created, is_authorized from ARTICLES WHERE is_authorized= " +
+           "TRUE LIMIT 10 ORDER BY date_created"
     rows, err := db.Query(cmd)
     if err != nil { return artArr, err }
     for rows.Next() {
