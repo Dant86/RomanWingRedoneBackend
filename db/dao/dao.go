@@ -8,15 +8,17 @@ import (
 )
 
 func CreateUser(fName, lName, email, pword string) (int, error) {
-    hashByte, _ := bcrypt.GenerateFromPassword([]byte(pword),
-                                               bcrypt.DefaultCost)
+    hashByte, err := bcrypt.GenerateFromPassword([]byte(pword), bcrypt.DefaultCost)
+    if err != nil { return -1, err }
     hashStr := string(hashByte)
     db := utils.OpenMySQL("root", "dbpassword")
     cmd1 := "INSERT INTO users (first_name, last_name, email, is_admin) " +
             "VALUES (?, ?, ?, FALSE)"
     cmd2 := "INSERT INTO user_auth (hash, user_id) VALUES (?, ?)"
-    stmt1, _ := db.Prepare(cmd1)
-    stmt2, _ := db.Prepare(cmd2)
+    stmt1, err := db.Prepare(cmd1)
+    if err != nil { return -1, err }
+    stmt2, err := db.Prepare(cmd2)
+    if err != nil { return -1, err }
     res, err := stmt1.Exec(fName, lName, email)
     if res == nil || err != nil { return -1, err }
     id, _ := res.LastInsertId()
@@ -75,7 +77,7 @@ func UpdatePassword(userId int, currPword, newPword string) error {
     db := utils.OpenMySQL("root", "dbpassword")
     usr, err := GetUser(userId)
     if err != nil { return err }
-    err := ValidateUser(usr.Email, currPword)
+    err = ValidateUser(usr.Email, currPword)
     if err != nil { return err }
     hashByte, _ := bcrypt.GenerateFromPassword([]byte(newPword),
                                                bcrypt.DefaultCost)
