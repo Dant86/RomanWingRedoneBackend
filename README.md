@@ -200,7 +200,7 @@ On success: Array of [Article](#article)s
 
 on failure: [Error](#error)
 
-### `Get10MostRecentArticles()`
+### `Get12MostRecentArticles()`
 
 __Parameters__:
 
@@ -309,6 +309,16 @@ __Returns__:
 On success: Array of [Event](#event)s
 
 On failure: [Error](#error)
+
+### `Migrate`
+
+__Parameters__:
+
+_none_
+
+__Returns__:
+
+_none_
 
 --------
 ## Definitions

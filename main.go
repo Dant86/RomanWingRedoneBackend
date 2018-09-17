@@ -1,8 +1,10 @@
 package main
 
 import (
+    "fmt"
     "RomanWingBackend/db/dao"
     "RomanWingBackend/db/models"
+    "RomanWingBackend/db/utils"
     _ "github.com/go-sql-driver/mysql"
     "encoding/json"
     "C"
@@ -48,8 +50,10 @@ func GetUserByEmail(email *C.char) *C.char {
 
 //export ValidateUser
 func ValidateUser(email, pword *C.char) *C.char {
+    fmt.Println("I'm here")
     newEmail := C.GoString(email)
     newPword := C.GoString(pword)
+    fmt.Println(newEmail + " " + newPword)
     err := dao.ValidateUser(newEmail, newPword)
     if err != nil { return serializeError(err) }
     return C.CString("{}")
@@ -130,10 +134,10 @@ func GetApprovedArticles() *C.char {
     return C.CString(result + "]")
 }
 
-//export Get10MostRecentArticles
-func Get10MostRecentArticles() *C.char {
+//export Get12MostRecentArticles
+func Get12MostRecentArticles() *C.char {
     result := "["
-    articles, err := dao.Get10MostRecentArticles()
+    articles, err := dao.Get12MostRecentArticles()
     if err != nil { return serializeError(err) }
     for ix, article := range articles {
         serialized, _ := json.Marshal(article)
@@ -207,6 +211,13 @@ func GetFutureEvents() *C.char {
         }
     }
     return C.CString(result + "]")
+}
+
+//export Migrate
+func Migrate() {
+    tNames := []string{"users-table", "user-auth-table", "articles-table",
+                       "saved-articles-table", "events-table"}
+    utils.Migrate("root", "dbpassword", "db/migrations.sql", tNames)
 }
 
 func main() {}

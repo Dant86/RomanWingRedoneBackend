@@ -1,6 +1,7 @@
 package dao
 
 import (
+    "fmt"
     "RomanWingBackend/db/utils"
     "RomanWingBackend/db/models"
     _ "github.com/go-sql-driver/mysql"
@@ -63,11 +64,14 @@ func GetHash(userId int) (string, error) {
 }
 
 func ValidateUser(email string, pword string) error {
+    fmt.Println(email)
     u, err := GetUserByEmail(email)
     if err != nil { return err }
     id := u.ID
+    fmt.Println(id)
     h, err := GetHash(id)
     if err != nil { return err }
+    fmt.Println(h)
     err = bcrypt.CompareHashAndPassword([]byte(h), []byte(pword))
     if err != nil { return err }
     return nil
@@ -183,12 +187,12 @@ func GetApprovedArticles() ([]models.Article, error) {
     return artArr, nil
 }
 
-func Get10MostRecentArticles() ([]models.Article, error) {
+func Get12MostRecentArticles() ([]models.Article, error) {
     db := utils.OpenMySQL("root", "dbpassword")
     var artArr []models.Article
     cmd := "SELECT id, title, description, creator_id, body, thumbnail_url, " +
            "date_created, is_authorized from ARTICLES WHERE is_authorized= " +
-           "TRUE LIMIT 10 ORDER BY date_created"
+           "TRUE LIMIT 12 ORDER BY date_created"
     rows, err := db.Query(cmd)
     if err != nil { return artArr, err }
     for rows.Next() {
